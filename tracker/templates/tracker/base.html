@@ -1,0 +1,25 @@
+<!-- tracker/templates/tracker/base.html -->
+
+{% load static %}  <!-- Load the static tag library here -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker App</title>
+    <link rel="stylesheet" href="{% static 'tracker/css/styles.css' %}"> <!-- Using static -->
+</head>
+<body>
+    <header>
+        <h1>Tracker App</h1>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>Footer Content</p>
+    </footer>
+    <script src="{% static 'tracker/js/scripts.js' %}"></script> <!-- Using static -->
+</body>
+</html>

@@ -1,0 +1,11 @@
+<!-- tracker/templates/tracker/index.html -->
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+    <h2>Welcome to Tracker</h2>
+    <ul>
+        {% for model in models %}
+            <li>{{ model.name }} - {{ model.description }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
