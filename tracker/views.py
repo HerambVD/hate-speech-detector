@@ -51,23 +51,6 @@ verbalizer = ManualVerbalizer(
     }
 )
 
-# print(verbalizer.label_words)
-# label_words_ids = []
-# for label, words in verbalizer.label_words.items():
-#     # Get the token IDs for each word in the class
-#     label_words_ids.append([tokenizer.encode(word) for word in words])
-
-# # Convert list to a tensor
-# verbalizer.label_words_ids = torch.tensor(label_words_ids, dtype=torch.long)
-
-# # Now you can slice it to match the expected shape
-# # Ensure you're using nn.Parameter if you're assigning to a model parameter
-# verbalizer.label_words_ids = nn.Parameter(verbalizer.label_words_ids[..., :1])
-
-
-
-
-
 # Define the model for classification
 model = PromptForClassification(
     copy.deepcopy(plm),
