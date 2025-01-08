@@ -60,7 +60,7 @@ model = PromptForClassification(
 
 
 # Load the trained model
-# model.load_state_dict(torch.load('best_model_by_template_01_04_25.pt'))
+model.load_state_dict(torch.load('../best_model_by_template_01_04_25.pt'))
 
 # Function to convert a DataFrame to InputExamples
 def df_to_inputexamples(df):
@@ -83,37 +83,37 @@ def classify_text(request):
                 return JsonResponse({'error': 'No text provided'}, status=400)
 
             # Convert the input text into an InputExample
-            # input_example = InputExample(text_a=input_text, label=None)
-            # #test_input_examples = [input_example, 1]
+            input_example = InputExample(text_a=input_text, label=None)
+            #test_input_examples = [input_example, 1]
 
-            # test_df = pd.DataFrame(columns=['Content', 'Label'])
-            # test_df.loc[len(test_df)] = [input_text, 1]
+            test_df = pd.DataFrame(columns=['Content', 'Label'])
+            test_df.loc[len(test_df)] = [input_text, 1]
             # print(test_df)
 
-            # test_input_examples = df_to_inputexamples(test_df)
+            test_input_examples = df_to_inputexamples(test_df)
 
-            # # Create PromptDataLoader
-            # test_dataloader = PromptDataLoader(
-            #     dataset=test_input_examples,
-            #     template=template,
-            #     tokenizer=tokenizer,
-            #     tokenizer_wrapper_class=WrapperClass,
-            #     decoder_max_length=256,
-            #     max_seq_length=256,
-            #     batch_size=16
-            # )
+            # Create PromptDataLoader
+            test_dataloader = PromptDataLoader(
+                dataset=test_input_examples,
+                template=template,
+                tokenizer=tokenizer,
+                tokenizer_wrapper_class=WrapperClass,
+                decoder_max_length=256,
+                max_seq_length=256,
+                batch_size=16
+            )
 
-            # # Perform the classification
-            # model.eval()
-            # with torch.no_grad():
-            #     for inputs in test_dataloader:
-            #         inputs = inputs.to('cuda' if torch.cuda.is_available() else 'cpu')
-            #         logits = model(batch=inputs)
-            #         pred = torch.argmax(logits, dim=1).item()
+            # Perform the classification
+            model.eval()
+            with torch.no_grad():
+                for inputs in test_dataloader:
+                    inputs = inputs.to('cuda' if torch.cuda.is_available() else 'cpu')
+                    logits = model(batch=inputs)
+                    pred = torch.argmax(logits, dim=1).item()
 
-            # # Map prediction to label
-            # label = classes[pred]
-            label = 1
+            # Map prediction to label
+            label = classes[pred]
+            # label = 1
             return JsonResponse({'text': input_text, 'prediction': label})
 
         except Exception as e:
