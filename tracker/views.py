@@ -10,6 +10,7 @@ import torch
 from torch import nn
 import random
 import copy
+import json
 
 # Load the pre-trained model and tokenizer
 plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-large")
@@ -36,10 +37,8 @@ template = ManualTemplate(
         + ' '.join(demonstrations)
 )
 
-classes = [ 
-    "negative",
-    "positive"
-]
+classes = [ "negative", "positive"]
+
 verbalizer = ManualVerbalizer(
     tokenizer=tokenizer, 
     classes = classes,
@@ -77,17 +76,30 @@ def df_to_inputexamples(df):
 def classify_text(request):
     if request.method == "POST":
         try:
+
+            body = json.loads(request.body.decode('utf-8'))
+            input_texts = body.get('texts', None)
+
+            if not input_texts or not isinstance(input_texts, list):
+                return JsonResponse({'error': 'Invalid input. Provide a list of texts in the "texts" field.'}, status=400)
+
             # Get text input from the request
-            input_text = request.POST.get('text', None)
-            if not input_text:
-                return JsonResponse({'error': 'No text provided'}, status=400)
+
+            # input_text = input_texts[0]
+            # if not input_text:
+            #     return JsonResponse({'error': 'No text provided'}, status=400)
+
+            # input_text = request.POST.get('text', None)
+            # if not input_text:
+            #     return JsonResponse({'error': 'No text provided'}, status=400)
 
             # Convert the input text into an InputExample
-            input_example = InputExample(text_a=input_text, label=None)
+            # input_example = InputExample(text_a=input_text, label=None)
             #test_input_examples = [input_example, 1]
 
             test_df = pd.DataFrame(columns=['Content', 'Label'])
-            test_df.loc[len(test_df)] = [input_text, 1]
+            for text in input_texts:
+                test_df.loc[len(test_df)] = [text, 1]
             # print(test_df)
 
             test_input_examples = df_to_inputexamples(test_df)
@@ -104,18 +116,25 @@ def classify_text(request):
             )
 
             # Perform the classification
+            labels = []
             model.eval()
             with torch.no_grad():
                 for inputs in test_dataloader:
                     inputs = inputs.to('cuda' if torch.cuda.is_available() else 'cpu')
                     logits = model(batch=inputs)
-                    pred = torch.argmax(logits, dim=1).item()
+                    pred = torch.argmax(logits, dim=1).tolist()
+                    print("+++++++++++++++++++")
+                    print(pred,type(pred))
+                    print("+++++++++++++++++++")
+
 
             # Map prediction to label
-            label = classes[pred]
-            # label = 1
-            return JsonResponse({'text': input_text, 'prediction': label})
-
+            for i in pred:
+                labels.append(classes[i])
+            return JsonResponse({'text': input_texts, 'prediction': labels})
+        
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON payload'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:
