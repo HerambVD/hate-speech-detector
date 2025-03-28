@@ -123,14 +123,14 @@ def classify_text(request):
                     inputs = inputs.to('cuda' if torch.cuda.is_available() else 'cpu')
                     logits = model(batch=inputs)
                     pred = torch.argmax(logits, dim=1).tolist()
-                    print("+++++++++++++++++++")
-                    print(pred,type(pred))
-                    print("+++++++++++++++++++")
+                    for i in pred:
+                        labels.append(classes[i])
+
+            print("+++++++++++++++++++")
+            print(input_texts,labels)
+            print("+++++++++++++++++++")
 
 
-            # Map prediction to label
-            for i in pred:
-                labels.append(classes[i])
             return JsonResponse({'text': input_texts, 'prediction': labels})
         
         except json.JSONDecodeError:
