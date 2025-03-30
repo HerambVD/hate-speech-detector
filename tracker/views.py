@@ -59,7 +59,7 @@ model = PromptForClassification(
 
 
 # Load the trained model
-model.load_state_dict(torch.load('../best_model_by_template_01_04_25.pt'))
+model.load_state_dict(torch.load('/best_model_by_template_01_04_25.pt'))
 
 # Function to convert a DataFrame to InputExamples
 def df_to_inputexamples(df):
