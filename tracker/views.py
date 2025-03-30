@@ -96,6 +96,7 @@ def classify_text(request):
             # Convert the input text into an InputExample
             # input_example = InputExample(text_a=input_text, label=None)
             #test_input_examples = [input_example, 1]
+            #
 
             test_df = pd.DataFrame(columns=['Content', 'Label'])
             for text in input_texts:
