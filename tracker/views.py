@@ -141,3 +141,6 @@ def classify_text(request):
     else:
         return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
 
+def health_check(request):
+    print("Health check endpoint hit")
+    return JsonResponse({"status": "ok"})
